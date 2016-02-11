@@ -4,17 +4,28 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Stanley</title>
+  <title>推荐引擎算法 - 猜你喜欢的东西 | Stanley</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Stanley">
-<meta property="og:url" content="http://sunmh207.github.io/index.html">
+  <meta name="description" content="在一些大型购物网站，我们常会看到一个功能叫“猜你喜欢”（或其它类似的名字），里面列出一些跟你买过商品相关的其它商品。网站的用户越多，或你在网站上购买的东西越多，它往往就猜的越准。在一些音乐网站、书评网站、电影网站也有类似的推荐系统，比如豆瓣上的“豆瓣猜”、百度音乐的“为你推荐”等，推荐结果都不错。
+这些推荐系统的具体实现我们无法知晓，但原理是类似的，都是采用基于协同过滤的推荐机制。这里我们探讨一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推荐引擎算法 - 猜你喜欢的东西">
+<meta property="og:url" content="http://sunmh207.github.io/2016/02/01/recommendcourses/index.html">
 <meta property="og:site_name" content="Stanley">
-<meta property="og:description">
+<meta property="og:description" content="在一些大型购物网站，我们常会看到一个功能叫“猜你喜欢”（或其它类似的名字），里面列出一些跟你买过商品相关的其它商品。网站的用户越多，或你在网站上购买的东西越多，它往往就猜的越准。在一些音乐网站、书评网站、电影网站也有类似的推荐系统，比如豆瓣上的“豆瓣猜”、百度音乐的“为你推荐”等，推荐结果都不错。
+这些推荐系统的具体实现我们无法知晓，但原理是类似的，都是采用基于协同过滤的推荐机制。这里我们探讨一下">
+<meta property="og:image" content="http://sunmh207.github.io/images/rating_matrix.png">
+<meta property="og:image" content="http://sunmh207.github.io/images/abc.png">
+<meta property="og:image" content="http://sunmh207.github.io/images/fomular_1.gif">
+<meta property="og:image" content="http://sunmh207.github.io/images/fomular_2.gif">
+<meta property="og:image" content="http://sunmh207.github.io/images/rating_matrix2.png">
+<meta property="og:image" content="http://sunmh207.github.io/images/fomular_3.gif">
+<meta property="og:image" content="http://sunmh207.github.io/images/fomular_4.gif">
+<meta property="og:updated_time" content="2016-02-03T09:35:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Stanley">
-<meta name="twitter:description">
+<meta name="twitter:title" content="推荐引擎算法 - 猜你喜欢的东西">
+<meta name="twitter:description" content="在一些大型购物网站，我们常会看到一个功能叫“猜你喜欢”（或其它类似的名字），里面列出一些跟你买过商品相关的其它商品。网站的用户越多，或你在网站上购买的东西越多，它往往就猜的越准。在一些音乐网站、书评网站、电影网站也有类似的推荐系统，比如豆瓣上的“豆瓣猜”、百度音乐的“为你推荐”等，推荐结果都不错。
+这些推荐系统的具体实现我们无法知晓，但原理是类似的，都是采用基于协同过滤的推荐机制。这里我们探讨一下">
   
     <link rel="alternative" href="/atom.xml" title="Stanley" type="application/atom+xml">
   
@@ -171,256 +182,7 @@
 	</div>
 </nav>
 
-      <div class="body-wrap">
-  
-    <article id="post-lr" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/02/05/lr/" class="article-date">
-  	<time datetime="2016-02-05T04:47:18.000Z" itemprop="datePublished">2016-02-05</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/05/lr/">用逻辑回归对用户分类</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果你在运营一个2C的平台，那么你肯定关心用户流失的问题。腾讯有个产品叫信鸽Pro，它能够通过对用户往期行为的挖掘，预测用户潜在的流失（付费）行为，进而实现精准营销。据说，腾讯自己的手游就是用这个系统做用户分析的。</p>
-<p>信鸽Pro获取大量用户数据，提取用户特征，然后通过算法建模，评估出用户可能的行为。算法建模中最基础的一步就是对用户进行分类。这里就介绍一种常用的分类算法 － 逻辑回归。</p>
-<h2 id="u6A21_u578B"><a href="#u6A21_u578B" class="headerlink" title="模型"></a>模型</h2><p>用户数据比较复杂，这里用平面上的点举例。假设平面上有一些点，如图所示：<br><img src="/images/lr/points_100.png" alt=""></p>
-<p>整个平面上只有两种图形，一种是三角形，另一种是圆形。可以把它们想象为两种不同的用户，比如活跃用户／非活跃用户。<br>问题：如果随意在这个平面新增加一个点, 比如点P(5,19)，那怎知把它归到哪一组更合适？可以想象为对新用户的预测。</p>
-<h2 id="u601D_u8DEF"><a href="#u601D_u8DEF" class="headerlink" title="思路"></a>思路</h2><p>我们发现，三角形大都位于左上方，而圆形大都位于右下方。我们可以用尺子在图上画一条直线，该直线尽可能的将三角形和圆形分到两边。然后观察新点位于哪一侧。若与三角形在同一侧，则它应该属于三角形；若位于圆形一侧，则应属于圆形。在本例中，坐标P应该属于三角形更合适。<br><img src="/images/lr/points_101.png" alt=""></p>
-<p>这个问题似乎很简单。但是，如果三维空间存在类似的问题，答案就没有那么显而易见了。那4维空间呢? 1024维空间呢?</p>
-<p>不过别担心！借助计算机算法，N维空间分类的问题已经很容易解决，逻辑回归就是常用的一种。</p>
-<h1 id="u903B_u8F91_u56DE_u5F52"><a href="#u903B_u8F91_u56DE_u5F52" class="headerlink" title="逻辑回归"></a>逻辑回归</h1><p>逻辑回归的核心思想就是通过现有数据，对分类边界线建立回归公式，以此进行分类。</p>
-<p>在介绍算法之前，需要先介绍一个函数: Sigmoid函数。</p>
-<h2 id="Sigmoid_u51FD_u6570"><a href="#Sigmoid_u51FD_u6570" class="headerlink" title="Sigmoid函数"></a>Sigmoid函数</h2><p>Sigmoid函数的表达式为：<br><img src="/images/lr/sigmoid_formular.gif" alt=""></p>
-<p>在坐标系中的图形为：<br><img src="/images/lr/sigmoid_0.png" alt=""></p>
-<p>x&gt;0时，x越大y越接近于1；x&lt;0时，x越小，y越接近于0。如果把坐标拉长，曲线中间就会很“陡”。直观上x的“轻微”变化，都会导致y接近于0或1。</p>
-<p><img src="/images/lr/sigmoid_1.png" alt=""></p>
-<p>Sigmoid函数的作用是将任意实数转换成0～1的数，而0和1刚好可以用做分类，比如，<strong>用1表示三角形，用0表示圆形</strong>。小于0.5的可以划分为0类，大于0.5的划分为1类。（注：Sigmoid是单调增长函数，因而多个数字通过Sigmoid转换后相对位置不变，这是选择该函数的重要原因。）</p>
-<h1 id="u5206_u6790_u6B65_u9AA4"><a href="#u5206_u6790_u6B65_u9AA4" class="headerlink" title="分析步骤"></a>分析步骤</h1><h2 id="u7B80_u5316_u6A21_u578B"><a href="#u7B80_u5316_u6A21_u578B" class="headerlink" title="简化模型"></a>简化模型</h2><p>为便于分析，把模型中的坐标简化一些。下面的六个坐标点和一条分割线：</p>
-<p><img src="/images/lr/points_6.png" alt=""></p>
-<p>其中红色三角形坐标分别是(1,2)、(1.5,7)和(2,6)。绿色圆点坐标分别是（1,0）、(2,3)和(2.5,6)。分割线的函数为y=4x-3. 它的形式还可以转换成：3-4x+y=0 。</p>
-<p>我们设表达式f(x,y) = 3-4x+y</p>
-<p>把六个点的坐标代到这个方程式里,有</p>
-<p>&lt;表1&gt;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">坐标</th>
-<th style="text-align:center">分割线f(x,y)</th>
-<th style="text-align:right">f(x,y)结果</th>
-<th>分类</th>
-<th>标识</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">(1,2)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">1</td>
-<td>三角</td>
-<td>1</td>
-</tr>
-<tr>
-<td style="text-align:center">(1.5,7)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">4</td>
-<td>三角</td>
-<td>1</td>
-</tr>
-<tr>
-<td style="text-align:center">(2,6)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">1</td>
-<td>三角</td>
-<td>1</td>
-</tr>
-<tr>
-<td style="text-align:center">(1,0)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">-1</td>
-<td>圆形</td>
-<td>0</td>
-</tr>
-<tr>
-<td style="text-align:center">(2,3)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">-2</td>
-<td>圆形</td>
-<td>0</td>
-</tr>
-<tr>
-<td style="text-align:center">(2.5,6)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">-1</td>
-<td>圆形</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-<p><em>(注：标识1表示三角形；标识0表示圆形)</em><br>f(x,y)&gt;0的点在分割线上方，是三角形；f(x,y)&lt;0的点在分割线下方，是圆形.</p>
-<p>如果有个三角形的坐标是(2,4.5),那这个点的f(x,y)值等于-0.5，这个点就被分割线错误划分了。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">坐标</th>
-<th style="text-align:center">分割线f(x,y)</th>
-<th style="text-align:right">f(x,y)结果</th>
-<th>分类</th>
-<th>标识</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">(2，4.5)</td>
-<td style="text-align:center">3-4x+y</td>
-<td style="text-align:right">－0.5</td>
-<td>三角</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-<p>现在的问题是，我们只有一些坐标以及这些坐标的分类信息，如何找到一条最优的分割线,使得尽可能少的点被错误划分？</p>
-<h2 id="u635F_u5931_u51FD_u6570"><a href="#u635F_u5931_u51FD_u6570" class="headerlink" title="损失函数"></a>损失函数</h2><p>损失函数 (Loss Function) 的作用是判断直线错误划分数据的程度。一种方法是计算被错误划分的点的个数，错误点越少，直线越好。但，这种方法很难优化。另一种方法是计算点到直线的距离。<br><img src="/images/lr/d_formular_line.jpg" alt=""><br>如果是一个平面来划分三维空间的点，那距离公式为<br><img src="/images/lr/d_formular_surface.jpg" alt=""></p>
-<p>一般的，n维空间上一个点到超平面的距离为<br><img src="/images/lr/d_formular_general.gif" alt=""></p>
-<p><em>w</em>是超平面的参数向量,<img src="/images/lr/w_formular_vector.gif" alt=""></p>
-<p><em>x</em>是超平面的自变量,<img src="/images/lr/x_formular_vector.gif" alt=""></p>
-<p>b是截距</p>
-<p>超平面函数：<img src="/images/lr/wx_formular.gif" alt=""><br><img src="/images/lr/wx_formular_element1.gif" alt="">表示x向量的第i个元素（特性）；后面会用到<img src="/images/lr/wx_formular_element2.gif" alt="">，表示空间中的第i个点。</p>
-<p>为了方便计算，一般在<em>x</em>中增加一个元素1，<em>w</em>中增加一个元素w0=b<br><img src="/images/lr/w_formular_vector2.gif" alt=""><br><img src="/images/lr/x_formular_vector2.gif" alt=""><br>于是超平面函数变为：<img src="/images/lr/wx_formular2.gif" alt=""></p>
-<p>距离公式变为：<img src="/images/lr/d_formular_general2.gif" alt=""></p>
-<p>超平面上方的点f(x)&gt;0, 下方的点f(x)&lt;0,因此点到超平面的距离（分正负）:<br><img src="/images/lr/d_formular_general4.gif" alt=""></p>
-<p>d是一个负无穷到正无穷的数。</p>
-<p>通过sigmoid函数，将d变成一个0～1的值，设h = sigmoid(d)。若d为正且越大，h越接近于1，也就越应该属于三角形（分类1）；若d为负，且绝对值越大，h越接近于0，该点也就越应该属于圆形(分类0)。因此，h越接近于分类标识，划分的准确性越高。</p>
-<p>设第j个点的分类表示为<img src="/images/lr/l_j.gif" alt="">，那么下面的公式就表示点j被错误划分的概率。<br><img src="/images/lr/l_j-h_j.gif" alt=""></p>
-<p>我们把<em>损失函数</em>设定为所有点被错误划分的平均概率<br><img src="/images/lr/loss_func.gif" alt=""></p>
-<p>平方是为了保证概率为正，前面的1/2是为了求导数后消除参数。</p>
-<p>那么，问题转化成：找到w的一个值，使得损失函数的值最小。</p>
-<h2 id="u7528_u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42w"><a href="#u7528_u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42w" class="headerlink" title="用梯度下降法求w"></a>用梯度下降法求<strong>w</strong></h2><p>所谓梯度，就是函数在某个点增长最快的方向，有时称为斜度。如果函数是一个曲线，某个点的梯度就是该点的斜率，或导数。<br><img src="/images/lr/grade_2d_formular.gif" alt=""><br><img src="/images/lr/grade_2d_plot.png" alt=""><br>如果是曲面，梯度是在两个方向上求偏导。<br><img src="/images/lr/grade_3d_formular.gif" alt=""></p>
-<p>梯度下降法的核心思想是：欲求函数的最小值，先从某一点出发，沿着函数的梯度的反方向探寻，直到找到最小值。设每次探寻Delta(w)，步长为alpha，则梯度下降的算法的公式为：<br><img src="/images/lr/gradient_formular.gif" alt=""></p>
-<h3 id="u6C42_u5BFC"><a href="#u6C42_u5BFC" class="headerlink" title="求导"></a>求导</h3><p>用梯度下降法需要先对损失函数求导，我们的损失函数被分成三部分：</p>
-<ul>
-<li><img src="/images/lr/loss_func.gif" alt="">   ——— (1)</li>
-<li><img src="/images/lr/h_sigmoid.gif" alt="">   ——— (2)</li>
-<li><img src="/images/lr/d_formular_general3.gif" alt="">   ———- (3)</li>
-</ul>
-<p>可以通过复合函数求导法对损失函数求偏导：<br><img src="/images/lr/derivative_formular.gif" alt=""></p>
-<p>梯度公式重点关注的是导数的符号，所以这里可以简化一下。函数（2）是单调递增函数，所以导数是正数，不影响整体导数的符号，可以去除。 公式（3）的分母是正数，也不影响导数的符号，也可以去掉。最后得：<br><img src="/images/lr/derivative_formular2.gif" alt=""></p>
-<p>代入梯度下降算法公式得：<br><img src="/images/lr/gradient_formular2.gif" alt=""></p>
-<p>1/m为正数，也可用去掉。</p>
-<h2 id="u4EE3_u7801"><a href="#u4EE3_u7801" class="headerlink" title="代码"></a>代码</h2><p>loadData()函数返回坐标值和分类标识。第一个返回值取前三列 x0,x1,x2；第二个返回值取第四列，即label</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadData</span><span class="params">()</span>:</span></span><br><span class="line">  data = [[<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>],</span><br><span class="line">          [<span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">1</span>],</span><br><span class="line">          [<span class="number">1</span>, <span class="number">1.5</span>, <span class="number">7</span>, <span class="number">1</span>],</span><br><span class="line">          [<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">          [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>],</span><br><span class="line">          [<span class="number">1</span>, <span class="number">2.5</span>, <span class="number">6</span>, <span class="number">0</span>]]</span><br><span class="line">  ds = [e[<span class="number">0</span>:<span class="number">3</span>] <span class="keyword">for</span> e <span class="keyword">in</span> data]</span><br><span class="line">  label = [e[-<span class="number">1</span>] <span class="keyword">for</span> e <span class="keyword">in</span> data]</span><br><span class="line">  <span class="keyword">return</span> ds, label</span><br></pre></td></tr></table></figure>
-<p>Sigmoid函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span>/(<span class="number">1</span>+exp(-x))</span><br></pre></td></tr></table></figure>
-<p>梯度下降算法<br><strong>input</strong> ds: 坐标数据; label: 标签<br><strong>return</strong>  w: 系数向量, nx1的矩阵  </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduce</span><span class="params">(ds, label)</span>:</span></span><br><span class="line">  <span class="comment">#转换成矩阵</span></span><br><span class="line">  dmat = mat(ds)</span><br><span class="line">  lmat = mat(label).T</span><br><span class="line">  <span class="comment">#mxn的矩阵的行数和列数</span></span><br><span class="line">  m,n = shape(dmat)</span><br><span class="line">  <span class="comment">#步长</span></span><br><span class="line">  alpha = <span class="number">0.1</span></span><br><span class="line">  <span class="comment">#循环次数</span></span><br><span class="line">  loops = <span class="number">200</span></span><br><span class="line">  <span class="comment">#初始化w为[1,1,1],即分割线为 1+x+y=0</span></span><br><span class="line">  w = ones((n,<span class="number">1</span>))</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(loops): </span><br><span class="line">    h = sigmoid(dmat*w)</span><br><span class="line">    err = (h - lmat)</span><br><span class="line">    w = w - alpha * dmat.T* err </span><br><span class="line">  <span class="keyword">return</span> w.A[:,<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
-<p>测试<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">  ds,l = loadData()</span><br><span class="line">  <span class="keyword">print</span> reduce(ds,l)</span><br></pre></td></tr></table></figure></p>
-<p>运行结果<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#62;&#62;&#62; import lr&#10;&#62;&#62;&#62; lr.test()&#10;[ 3.1007773  -5.54393712  1.60563033]</span><br></pre></td></tr></table></figure></p>
-<p>也就是说w=(3.1, -5.5, 1.6), 即w0=3.1, w1=-5.5, w2 = 1.6</p>
-<p>分割线的表达式为：w0+w1x+w2y=0， 代入w后得 3.1-5.5x+1.6y=0, 即y=3.44x-1.9 。 见下图，该直线正确地将图形划分开。</p>
-<p><img src="/images/lr/points_6_line.gif" alt=""></p>
-<h2 id="u6267_u884C_u8FC7_u7A0B"><a href="#u6267_u884C_u8FC7_u7A0B" class="headerlink" title="执行过程"></a>执行过程</h2><p><em>w</em>的初始值为(1,1,1),也就是0号线。<br>每次循环都会调整分割线的位置，执行到第200次的时候，分割线已经能够很好对坐标分组了。<br>&lt;分割线调整图&gt; 线编号n表示第n次调整(循环)之后的位置<br><img src="/images/lr/points_6_linetrace.gif" alt=""></p>
-<h2 id="u5E94_u7528"><a href="#u5E94_u7528" class="headerlink" title="应用"></a>应用</h2><p>把上面的x,y转换成用户特征，比如登录时间，登录频率等等。把三角形和圆形转换成付费用户和免费用户，就得到了付费用户预测模型；把三角形和圆形转换成流失用户和有效用户，就得到了流失用户预测模型。<br>当然，<strong>这只是个理论模型，实际应用要比这复杂的多的多。</strong></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/逻辑回归-机器学习/">逻辑回归 机器学习</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-LR" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/02/04/LR/" class="article-date">
-  	<time datetime="2016-02-04T04:47:18.000Z" itemprop="datePublished">2016-02-04</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/04/LR/">用逻辑回归对数据进行分类</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="u62DF_u5408"><a href="#u62DF_u5408" class="headerlink" title="拟合"></a>拟合</h2><p>所谓拟合是指已知某函数的若干离散函数值{f1,f2,…,fn}，通过调整该函数中若干待定系数f(λ1, λ2,…,λn)，使得该函数与已知点集的差别(最小二乘意义)最小。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-recommendcourses" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-recommendcourses" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2016/02/01/recommendcourses/" class="article-date">
@@ -436,12 +198,23 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/01/recommendcourses/">推荐引擎算法 - 猜你喜欢的东西</a>
+    <h1 class="article-title" itemprop="name">
+      推荐引擎算法 - 猜你喜欢的东西
     </h1>
   
 
       </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SVD-机器学习-推荐引擎/">SVD 机器学习 推荐引擎</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
       
     
     <div class="article-entry" itemprop="articleBody">
@@ -484,33 +257,72 @@
       
     </div>
     
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SVD-机器学习-推荐引擎/">SVD 机器学习 推荐引擎</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/02/04/LR/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          用逻辑回归对数据进行分类
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
   
 </article>
 
 
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
 
 
 
 
 
 
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="recommendcourses" data-title="推荐引擎算法 - 猜你喜欢的东西" data-url="http://sunmh207.github.io/2016/02/01/recommendcourses/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
 
-  
-  
+
+
+
 </div>
       <footer id="footer">
   <div class="outer">
@@ -534,8 +346,8 @@
 		fancybox: true,
 		mathjax: true,
 		animate: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
